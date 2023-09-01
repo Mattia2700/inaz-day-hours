@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "INAZ Current Day Hours",
-  "version": "1.0",
-  "description": "Add current day hours within the INAZ personal timecard page",
+  "name": "INAZ Daily Hours",
+  "version": "1.1",
+  "description": "Add daily hours within the INAZ personal timecard page",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",

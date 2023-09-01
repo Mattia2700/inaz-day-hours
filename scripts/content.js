@@ -20,8 +20,7 @@ const WeekString = {
   '5': 'V',
 }
 const MS_TO_SEC = 1000;
-const TIMEOUT = 5 * MS_TO_SEC;
-const TEST = false;
+const TIMEOUT = 10 * MS_TO_SEC;
 
 function timeDifference(e, u) {
   const e_time = e.split(':');
@@ -64,24 +63,6 @@ function timeSum(times){
   }
 }
 
-
-let day = new Date().getDate();
-if (day < 10) {
-  day = '0' + day;
-}
-const weekDay = new Date().getDay();
-let month = new Date().getMonth() + 1;
-// pad month with 0
-if (month < 10) {
-  month = '0' + month;
-}
-const year = new Date().getFullYear();
-const date = `${day}/${month}/${year}`;
-const row_title = WeekString[weekDay] + ' ' + date;
-const text = '[title="' + row_title + '"]';
-const test_text = '[id="1167576"]'
-
-
 function getRow(){
   const iframe = document.querySelector('#WizFrame1');
   if (!iframe) {
@@ -95,57 +76,48 @@ function getRow(){
   if (!table) {
     return;
   }
-  let row = null;
-  if (TEST) {
-    row = table.querySelector(test_text)
-  } else {
-    row = table.querySelector(text).parentElement;
-  }
-  if (!row) {
+  let rows = table.querySelectorAll('tr:nth-child(n + 2)');
+  if (!rows) {
     return;
   }
-  return row;
+  return rows;
 }
 
-function getDiff(row){
-  let diff = [];
-  const e1 = row.querySelector('td:nth-child(4) > div');
-  const u1 = row.querySelector('td:nth-child(5) > div');
-  const e2 = row.querySelector('td:nth-child(6) > div');
-  const u2 = row.querySelector('td:nth-child(7) > div');
-  const e3 = row.querySelector('td:nth-child(8) > div');
-  const u3 = row.querySelector('td:nth-child(9) > div');
-  if (e1 != null && u1 != null){
-    diff.push(timeDifference(e1.textContent, u1.textContent));
+function getDayHours(rows){
+  let diffTotal = [];
+  for(let i = 0; i < rows.length; i++){
+    let diff = [];
+    // select all from 4 to 9
+    const x = rows[i].querySelectorAll('td:nth-child(n + 4):nth-child(-n + 9) > div');
+    for (let i = 0; i < x.length-1; i+=2){
+      if (x[i] != null && x[i+1] != null){
+        diff.push(timeDifference(x[i].textContent, x[i+1].textContent));
+      }
+    }
+    diffTotal.push(timeSum(diff));
   }
-  if (e2 != null && u2 != null){
-    diff.push(timeDifference(e2.textContent, u2.textContent));
-  }
-  if (e3 != null && u3 != null){
-    diff.push(timeDifference(e3.textContent, u3.textContent));
-  }
-  return diff;
+  return diffTotal;
 }
 
-function showTime(row, totalTime){
-  if (totalTime != '00:00'){
-    const cell = row.querySelector('td:nth-child(18)');
-    const div = document.createElement('div');
-    div.innerHTML = '<i><b>Totale: </b>' + totalTime +'</i>';
-    cell.appendChild(div);
+function showTime(rows, totalTime){
+  for (let i = 0; i < rows.length; i++){
+    if (totalTime[i] != '00:00'){
+      const cell = rows[i].querySelector('td:nth-child(18)');
+      const divExists = cell.querySelector('div');
+      if (!divExists) {
+        const div = document.createElement('div');
+        div.innerHTML = '<i><b>Totale:</b> ' + totalTime[i] +'</i>';
+        cell.appendChild(div);
+      }
+    }
   }
 }
 
 function checkRow() {
-  const row = getRow();
-  if (!row) {
-    setTimeout(checkRow, TIMEOUT);
-    return;
-  }
-  const diff = getDiff(row);
-  const sum = timeSum(diff);
-  showTime(row, sum);
+  const rows = getRow();
+  setTimeout(checkRow, TIMEOUT);
+  const days = getDayHours(rows);
+  showTime(rows, days);
 }
 
-
-setTimeout(checkRow, TIMEOUT);
+checkRow();
