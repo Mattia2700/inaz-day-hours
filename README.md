@@ -11,3 +11,4 @@
 ## TODO
 
 - [ ] Use current time if last exit is missing
+- [ ] Add listener on month change instead of interval
