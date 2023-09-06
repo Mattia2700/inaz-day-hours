@@ -85,13 +85,16 @@ function getRow(){
 
 function getDayHours(rows){
   let diffTotal = [];
+  const date = new Date();
+  let time = `${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
   for(let i = 0; i < rows.length; i++){
     let diff = [];
     // select all from 4 to 9
     const x = rows[i].querySelectorAll('td:nth-child(n + 4):nth-child(-n + 9) > div');
     for (let i = 0; i < x.length-1; i+=2){
-      if (x[i] != null && x[i+1] != null){
-        diff.push(timeDifference(x[i].textContent, x[i+1].textContent));
+      if (x[i] != null){
+        if (x[i+1] != null) diff.push(timeDifference(x[i].textContent, x[i+1].textContent));
+        else diff.push(timeDifference(x[i].textContent, time));
       }
     }
     diffTotal.push(timeSum(diff));
@@ -114,10 +117,12 @@ function showTime(rows, totalTime){
 }
 
 function checkRow() {
-  const rows = getRow();
   setTimeout(checkRow, TIMEOUT);
-  const days = getDayHours(rows);
-  showTime(rows, days);
+  const rows = getRow();
+  if (rows) {
+    const days = getDayHours(rows);
+    showTime(rows, days);
+  }
 }
 
 checkRow();
