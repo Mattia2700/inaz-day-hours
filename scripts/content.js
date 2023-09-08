@@ -114,6 +114,9 @@ function showTime(rows, totalTime){
         const div = document.createElement('div');
         div.innerHTML = '<i><b>Totale:</b> ' + totalTime[i] +'</i>';
         cell.appendChild(div);
+      } else {
+        const div = cell.querySelector('div');
+        div.innerHTML = '<i><b>Totale:</b> ' + totalTime[i] +'</i>';
       }
     }
   }
