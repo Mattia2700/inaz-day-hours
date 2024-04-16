@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Constants
 const WeekString = {
   '1': 'L',
   '2': 'M',
@@ -21,7 +22,9 @@ const WeekString = {
 }
 const MS_TO_SEC = 1000;
 const TIMEOUT = 10 * MS_TO_SEC;
+const UPDATE_TIMEOUT = 60 * MS_TO_SEC;
 
+// Time related functions
 function timeDifference(e, u) {
   const e_time = e.split(':');
   const u_time = u.split(':');
@@ -54,7 +57,7 @@ function timeSum(times){
       const time = times[i].split(':');
       totalHours += parseInt(time[0]);
       totalMinutes += parseInt(time[1]);
-      if (totalMinutes > 60){
+      if (totalMinutes >= 60){
         totalHours += 1;
         totalMinutes -= 60;
       }
@@ -63,7 +66,12 @@ function timeSum(times){
   }
 }
 
-function getRow(){
+// DOM related functions
+function getButtons() {
+  // ...
+}
+
+function getRows(){
   const iframe = document.querySelector('#WizFrame1');
   if (!iframe) {
     return;
@@ -83,6 +91,7 @@ function getRow(){
   return rows;
 }
 
+// Main functions
 function getDayHours(rows){
   let diffTotal = [];
   const date = new Date();
@@ -123,12 +132,15 @@ function showTime(rows, totalTime){
 }
 
 function checkRow() {
-  setTimeout(checkRow, TIMEOUT);
-  const rows = getRow();
+  const rows = getRows();
   if (rows) {
     const days = getDayHours(rows);
     showTime(rows, days);
+    setTimeout(checkRow, UPDATE_TIMEOUT);
+  } else {
+    setTimeout(checkRow, TIMEOUT);
   }
 }
 
+// Main execution
 checkRow();
